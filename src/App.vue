@@ -31,10 +31,11 @@
       color="dark-gray"
       label="Search for a movie, tv show, person..."
       prepend-inner-icon="search"
+      v-model="searchFilters"
+      @input="applySearchFilter()"
     ></v-text-field>
-    {{info}}
     <v-content>
-      <MoviesCard/>
+      <MoviesCard :movieList="this.movieList"></MoviesCard>
     </v-content>
   </v-app>
 </template>
@@ -49,25 +50,39 @@ export default {
     MoviesCard,
   },
 
-  created(){
-    this.getMovies();
+  computed: {
+    movie(){
+      return this.movieList;
+    }
   },
 
   data: () => ({
     movies: {},
     info: {},
-
+    searchFilters: '',
+    apiUrl: 'http://localhost/app/movies/',
+    apiSearchUrl: 'http://localhost/app/moviesSearchTitle',
   }),
 
-  methods: {
-    getMovies(){
+  created(){
+    //this.getMovies();
+  },
+
+  methods:{
+    applySearchFilter(){
+      console.log(this.searchFilters)
+      this.$store.state.searchFilter = this.searchFilters
       const axios = require('axios');
       axios
-      .get('http://localhost/app/movies/1')
-      .then(response => (this.info = response.data))
-      /*let url= '';
-      return axios.get(url)*/
-    }
-  },
+      .get(this.apiSearchUrl + '?param=' + this.$store.state.searchFilter)
+      .then(response => (this.$store.state.movieList = response.data))
+    },
+    /*getMovies(){
+      const axios = require('axios');
+      axios
+      .get(this.apiUrl)
+      .then(response => (this.movieList = response.data))
+    }*/
+  }
 };
 </script>

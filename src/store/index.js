@@ -2,9 +2,12 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 Vue.use(Vuex)
-
-export default new Vuex.Store({
+  
+  /* eslint-disable no-new */
+const store = new Vuex.Store({
   state: {
+    searchFilter: '',
+    movieList: [],
   },
   mutations: {
   },
@@ -13,3 +16,5 @@ export default new Vuex.Store({
   modules: {
   }
 })
+
+export default store;

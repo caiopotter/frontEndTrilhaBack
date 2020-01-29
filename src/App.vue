@@ -21,41 +21,34 @@
       <v-btn text>People</v-btn>
       </div>
 
-      <v-spacer></v-spacer>
-
-      <v-btn text>Sign Up</v-btn>
-      <v-btn text>Sign In</v-btn>
-    </v-app-bar>
-    <br>
-    <v-text-field class="mt-10"
+      <v-text-field class="mt-6"
       color="dark-gray"
       label="Search for a movie, tv show, person..."
       prepend-inner-icon="search"
       v-model="searchFilters"
       @input="applySearchFilter()"
     ></v-text-field>
-    <v-content>
-      <MoviesCard :movieList="this.movieList"></MoviesCard>
+
+      <v-spacer></v-spacer>
+
+      <v-btn text>Sign Up</v-btn>
+      <v-btn text>Sign In</v-btn>
+    </v-app-bar>
+    
+   <v-content>
+      <v-container>
+        <v-fade-transition>
+          <router-view></router-view>
+        </v-fade-transition>
+      </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import MoviesCard from './components/MoviesCard';
 
 export default {
   name: 'App',
-
-  components: {
-    MoviesCard,
-  },
-
-  computed: {
-    movie(){
-      return this.movieList;
-    }
-  },
-
   data: () => ({
     movies: {},
     info: {},
@@ -70,7 +63,6 @@ export default {
 
   methods:{
     applySearchFilter(){
-      console.log(this.searchFilters)
       this.$store.state.searchFilter = this.searchFilters
       const axios = require('axios');
       axios

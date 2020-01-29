@@ -6,7 +6,7 @@
           <v-row>
             <v-col
               v-for="(movie, index) in $store.state.movieList"
-              :key="movie"
+              :key="index"
               cols="12"
               md="3"
             >
@@ -65,7 +65,6 @@
 <script>
 export default {
   name: 'MoviesCard',
-  props: ["movieList"],
 
   created(){
     this.getMovies();

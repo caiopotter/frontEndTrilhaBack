@@ -8,6 +8,9 @@ const store = new Vuex.Store({
   state: {
     searchFilter: '',
     movieList: [],
+    userLoggedIn: undefined,
+    userFavoriteList: [],
+    favoriteMovies: false,
   },
   mutations: {
   },

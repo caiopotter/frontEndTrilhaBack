@@ -17,20 +17,11 @@
                 dark
                 flat
               >
-                <v-toolbar-title>Sign Up form</v-toolbar-title>
+                <v-toolbar-title>Login form</v-toolbar-title>
                 <v-spacer></v-spacer>
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field
-                    color="dark-gray"
-                    label="Name"
-                    name="name"
-                    v-model="name"
-                    prepend-icon="person"
-                    type="text"
-                  ></v-text-field>
-
                   <v-text-field
                     color="dark-gray"
                     label="Email"
@@ -49,11 +40,13 @@
                     prepend-icon="lock"
                     type="password"
                   ></v-text-field>
+                  <font v-if="!isValidPass" style="color: red">Dados inválidos
+                  </font>
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click="signUpUser()" dark color="dark-gray">Sign Up</v-btn>
+                <v-btn class="mr-2" @click="loginUser()" dark color="dark-gray">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -66,7 +59,7 @@
 
 <script>
 export default {
-  name: 'SignForm',
+  name: 'LoginForm',
 
   created(){
     
@@ -76,28 +69,50 @@ export default {
     password: '',
     login: '',
     email: '',
-    apiFormUrl: 'http://localhost/app/users',
-    response: ''
+    apiFormUrl: 'http://localhost/app/usersSearchByEmail',
+    apiFavoritesUrl: 'http://localhost/app/userFavorites/',
+    response: '',
+    isValidPass: true,
   }),
 
   methods: {
-    signUpUser(){
+    loginUser(){
         const axios = require('axios');
         axios
-        .post(this.apiFormUrl, {
-        name: this.name,
-        email: this.email,
-        password: this.password
-      }).then((Response) => {
-        if(Response.status == 201){
-            this.redirectToLogin();
+        .get(this.apiFormUrl + '?param=' + this.email).then((Response) => {
+        if((Response.status == 200) && Response.data.length > 0){
+            this.validateUser(Response.data[0]);
         }
       });
     },
-    redirectToLogin(){
-            let routerToURL = "/login/";
-            this.$router.push(routerToURL);
+    redirectTo(path){
+        let routerToURL = path;
+        this.$router.push(routerToURL);
+    },
+    validateUser(user){
+        if(this.password == user.password){
+          this.$store.state.userLoggedIn = user;
+          this.getUserFavoriteList();
+          this.redirectTo('/')
+        }else{
+            this.isValidPass =  false;
+            setTimeout(()=>{
+                this.isValidPass =  true;
+          },5000);
+            
         }
+    },
+    getUserFavoriteList(){
+      const axios = require('axios');
+      axios
+      .get(this.apiFavoritesUrl + this.$store.state.userLoggedIn.id)
+      .then(response => {
+        for(let movie in response.data){
+          this.$store.state.userFavoriteList.push(movie);
+        }
+      });
+      this.$store.state.favoriteMovies = true;
+    }
   },
 
 };

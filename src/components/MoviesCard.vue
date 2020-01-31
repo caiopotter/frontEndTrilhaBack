@@ -1,5 +1,7 @@
 <template>
   <v-container>
+    <h1 v-if="$store.state.favoriteMovies">Favorite Movies</h1>
+    <h1 v-else>Movie List</h1>
     <v-item-group
       >
         <v-container class="pa-0">
@@ -26,8 +28,10 @@
                   <v-card-actions>
                     <v-btn
                       color="purple"
-                      text>
-                      Add to favorites {{index}}
+                      text
+                      v-if="($store.state.userLoggedIn && !movieInFavoriteList(movie.id))"
+                      @click="saveFavorite(movie.id)">
+                      Add to favorites
                     </v-btn>
               
                     <v-spacer></v-spacer>
@@ -73,6 +77,7 @@ export default {
   data: () => ({
     basePosterUrl: 'http://image.tmdb.org/t/p/w185',
     apiUrl: 'http://localhost/app/movies/',
+    apiSaveFavoriteUrl: 'http://localhost/app/saveFavorite/',
     show: false,
   }),
 
@@ -85,6 +90,17 @@ export default {
     },
     assemblePosterUrl(posterPath){
       return this.basePosterUrl + posterPath;
+    },
+    saveFavorite(movieId){
+      const axios = require('axios');
+      axios
+      .post(this.apiSaveFavoriteUrl + this.$store.state.userLoggedIn.id, 
+        {id: movieId})
+      .then(response => (console.log(response)))
+    },
+    movieInFavoriteList(movieId){
+      console.log(this.$store.state.userFavoriteList)
+      return this.$store.state.userFavoriteList.indexOf(movieId) >= 0;
     }
   },
 

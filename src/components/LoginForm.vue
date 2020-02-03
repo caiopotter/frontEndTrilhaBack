@@ -107,9 +107,14 @@ export default {
       axios
       .get(this.apiFavoritesUrl + this.$store.state.userLoggedIn.id)
       .then(response => {
-        for(let movie in response.data){
-          this.$store.state.userFavoriteList.push(movie);
+        this.$store.state.userLoggedIn.id
+        console.log(response)
+        for(let i = 0; i < response.data.length; i++){
+          this.$store.state.userFavoriteList.push(response.data[i].id)
         }
+        // for(let movie in response.data){
+        //   this.$store.state.userFavoriteList.push(movie.id);
+        // }
       });
       this.$store.state.favoriteMovies = true;
     }

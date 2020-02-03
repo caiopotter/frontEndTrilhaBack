@@ -27,11 +27,16 @@
                   
                   <v-card-actions>
                     <v-btn
-                      color="purple"
                       text
                       v-if="($store.state.userLoggedIn && !movieInFavoriteList(movie.id))"
                       @click="saveFavorite(movie.id)">
-                      Add to favorites
+                      <v-icon>mdi-heart-outline</v-icon>
+                    </v-btn>
+                    <v-btn
+                      text
+                      v-if="($store.state.userLoggedIn && movieInFavoriteList(movie.id))"
+                      @click="removeFavorite(movie.id)">
+                      <v-icon>mdi-heart</v-icon>
                     </v-btn>
               
                     <v-spacer></v-spacer>
@@ -78,6 +83,7 @@ export default {
     basePosterUrl: 'http://image.tmdb.org/t/p/w185',
     apiUrl: 'http://localhost/app/movies/',
     apiSaveFavoriteUrl: 'http://localhost/app/saveFavorite/',
+    apiRemoveFavoriteUrl: 'http://localhost/app/removeFavorite/',
     show: false,
   }),
 
@@ -96,7 +102,23 @@ export default {
       axios
       .post(this.apiSaveFavoriteUrl + this.$store.state.userLoggedIn.id, 
         {id: movieId})
-      .then(response => (console.log(response)))
+      .then(response => {
+        (console.log(response));
+        this.$store.state.userFavoriteList.push(movieId); 
+        })
+    },
+    removeFavorite(movieId){
+      const axios = require('axios');
+      axios
+      .post(this.apiRemoveFavoriteUrl + this.$store.state.userLoggedIn.id,
+      {id: movieId})
+      .then(response =>{(console.log(response))
+      let favoriteMovieIndex = this.$store.state.userFavoriteList.indexOf(movieId);
+      if(favoriteMovieIndex !== -1){
+        this.$store.state.userFavoriteList.splice(favoriteMovieIndex, 1);
+      }
+      
+      })
     },
     movieInFavoriteList(movieId){
       console.log(this.$store.state.userFavoriteList)
